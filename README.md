@@ -42,6 +42,7 @@ Finally, you can answer: *"What was I working on in that recipe app last Thursda
 - **GitHub Commit Links** — Connect your sessions to actual commits (proof you shipped something!)
 - **Tag Support** — Links to releases when available, because you're professional like that
 - **[Beads](https://github.com/steveyegge/beads) Integration** — See all your agent issues in one place, filterable by status and type
+- **CLAUDE.md Suggestions** — AI-generated instructions based on your coding patterns, one-click save to CLAUDE.md
 - **Search Everything** — Find that one session where you "fixed the auth thing" across all projects
 - **Date Filtering** — What did I do last week? Last month? Before my mass-deletion spree?
 - **Cron-Ready** — Runs daily in the background. Set it and forget it. (You will forget it. That's the point.)
@@ -114,9 +115,9 @@ cp .env.example .env
 # Run the analyzer
 python3 claude_history_analyzer.py
 
-# View your history
-python3 -m http.server 8080
-open http://localhost:8080
+# Start the server (includes API for saving suggestions)
+python3 server.py
+# Then open http://localhost:9347
 ```
 
 ## Usage
@@ -201,6 +202,9 @@ A: Yes! Agent sessions are captured just like regular sessions. You'll finally k
 
 **Q: What's the Beads integration?**
 A: If you use [Beads](https://github.com/steveyegge/beads) (the AI-friendly issue tracker), this tool automatically discovers and displays all your Beads issues per project. Filter by open/closed, bug/feature/task, and see close reasons for resolved issues. Perfect for tracking what your agents have been working on.
+
+**Q: How do CLAUDE.md suggestions work?**
+A: When you run the analyzer with an API key, Claude analyzes your coding patterns across all projects and generates personalized instructions for your CLAUDE.md file. Click "Suggestions" tab, then "Add to CLAUDE.md" to save any suggestion. Suggestions include coding style preferences, best practices for your project types, and patterns it noticed in your work.
 
 **Q: I accidentally mass-deleted my ~/.claude folder. Can this help?**
 A: No. This tool reads history, it doesn't create it. I'm sorry for your loss. 🕯️

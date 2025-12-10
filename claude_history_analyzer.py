@@ -401,6 +401,131 @@ Provide a brief 1-3 sentence summary of the day's work. Focus on concrete accomp
         return combined[:500]
 
 
+def generate_claude_md_suggestions(client: Optional[anthropic.Anthropic], output_data: dict) -> list[dict]:
+    """
+    Analyze history patterns and generate suggestions for CLAUDE.md instructions.
+
+    These suggestions are based on:
+    1. Patterns found in the user's coding history (common requests, repeated tasks)
+    2. Best practices relevant to the types of projects the user is building
+    """
+    if client is None:
+        return []
+
+    # Gather context from all projects
+    project_summaries = []
+    all_tools = set()
+    all_beads_types = set()
+    project_types = []
+
+    for project_path, project in output_data.items():
+        project_name = project.get("name", "unknown")
+
+        # Collect session summaries
+        for date, day_data in project.get("days", {}).items():
+            for session in day_data.get("sessions", []):
+                if session.get("summary"):
+                    project_summaries.append(f"[{project_name}] {session['summary'][:300]}")
+                all_tools.update(session.get("tools_used", []))
+
+        # Collect beads info
+        if project.get("beads") and project["beads"].get("stats"):
+            stats = project["beads"]["stats"]
+            all_beads_types.update(stats.get("by_type", {}).keys())
+
+        # Infer project type from name and path
+        project_types.append(project_name)
+
+    if not project_summaries:
+        return []
+
+    # Prepare prompt for Claude
+    summaries_sample = "\n".join(project_summaries[:50])  # Limit to avoid token overflow
+    tools_list = ", ".join(list(all_tools)[:30])
+
+    prompt = f"""You are analyzing a developer's Claude Code usage history to suggest instructions they could add to their CLAUDE.md file. CLAUDE.md is a file that provides persistent instructions to Claude Code across all sessions.
+
+## Developer's Projects
+{', '.join(project_types[:15])}
+
+## Sample of Recent Session Summaries
+{summaries_sample}
+
+## Tools Frequently Used
+{tools_list}
+
+## Issue Types Tracked (via Beads)
+{', '.join(all_beads_types) if all_beads_types else 'None'}
+
+---
+
+Based on this developer's patterns and your knowledge of best practices, suggest 5-8 instructions they could add to their CLAUDE.md file. Each suggestion should:
+
+1. Be actionable and specific
+2. Help Claude Code better assist this specific developer
+3. Either address a pattern you noticed OR introduce a best practice relevant to their project types
+
+For each suggestion, provide:
+- A short title (2-5 words)
+- The actual instruction text (1-3 sentences, written as you would write in CLAUDE.md)
+- A brief rationale explaining why this would help (1 sentence)
+
+Format your response as JSON array:
+```json
+[
+  {{
+    "title": "Short Title",
+    "instruction": "The actual instruction text to add to CLAUDE.md",
+    "rationale": "Why this would help the developer"
+  }}
+]
+```
+
+Focus on practical, high-value suggestions. Consider things like:
+- Code style preferences
+- Testing requirements
+- Documentation standards
+- Error handling approaches
+- Git commit conventions
+- Project-specific patterns
+- Language/framework best practices
+- Security considerations
+- Performance guidelines"""
+
+    try:
+        print("Generating CLAUDE.md suggestions...")
+        response = client.messages.create(
+            model="claude-opus-4-5-20251101",
+            max_tokens=2000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+        # Parse the JSON response
+        response_text = response.content[0].text
+
+        # Extract JSON from response (handle markdown code blocks)
+        import re
+        json_match = re.search(r'```json\s*([\s\S]*?)\s*```', response_text)
+        if json_match:
+            json_str = json_match.group(1)
+        else:
+            # Try to find raw JSON array
+            json_match = re.search(r'\[[\s\S]*\]', response_text)
+            if json_match:
+                json_str = json_match.group(0)
+            else:
+                print("  Warning: Could not parse suggestions JSON")
+                return []
+
+        suggestions = json.loads(json_str)
+        print(f"  Generated {len(suggestions)} suggestions")
+        return suggestions
+
+    except Exception as e:
+        print(f"  Warning: Failed to generate suggestions: {e}")
+        return []
+
+
 def load_existing_data(output_path: Path) -> dict:
     """Load existing history data if available."""
     if output_path.exists():
@@ -596,11 +721,15 @@ def analyze_history(output_path: Path = DEFAULT_OUTPUT, force_refresh: bool = Fa
                     client, day_data["sessions"], project_name
                 )
 
+    # Generate CLAUDE.md suggestions
+    suggestions = generate_claude_md_suggestions(client, output_data)
+
     # Save output
     final_output = {
         "projects": output_data,
         "last_updated": datetime.now().isoformat(),
-        "processed_sessions": list(processed_sessions | set(new_processed))
+        "processed_sessions": list(processed_sessions | set(new_processed)),
+        "suggestions": suggestions
     }
 
     output_path.parent.mkdir(parents=True, exist_ok=True)

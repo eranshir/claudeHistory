@@ -688,6 +688,166 @@
             transform: rotate(180deg);
         }
 
+        /* Suggestions styles */
+        .suggestions-tab {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px 6px 0 0;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 4px;
+            transition: all 0.15s;
+        }
+
+        .suggestions-tab:hover {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .suggestions-tab.active {
+            background: var(--accent-purple);
+            color: white;
+            border-color: var(--accent-purple);
+        }
+
+        .tabs-container {
+            display: flex;
+            margin-bottom: -1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .suggestions-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0 8px 8px 8px;
+            padding: 20px;
+            display: none;
+        }
+
+        .suggestions-panel.active {
+            display: block;
+        }
+
+        .suggestions-header {
+            margin-bottom: 20px;
+        }
+
+        .suggestions-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .suggestions-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .suggestion-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: border-color 0.15s;
+        }
+
+        .suggestion-card:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .suggestion-card.saved {
+            opacity: 0.6;
+            border-color: var(--accent-green);
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .suggestion-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent-purple);
+        }
+
+        .suggestion-save-btn {
+            padding: 6px 12px;
+            background: var(--accent-purple);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .suggestion-save-btn:hover {
+            background: #8b5cf6;
+            transform: translateY(-1px);
+        }
+
+        .suggestion-save-btn:disabled {
+            background: var(--accent-green);
+            cursor: default;
+            transform: none;
+        }
+
+        .suggestion-instruction {
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--accent-purple);
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", monospace;
+            white-space: pre-wrap;
+        }
+
+        .suggestion-rationale {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .suggestions-empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .suggestions-empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .claude-md-status {
+            margin-top: 20px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .claude-md-path {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", monospace;
+            color: var(--accent-blue);
+        }
+
         @media (max-width: 900px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -723,7 +883,18 @@
             <!-- Stats will be populated by JS -->
         </div>
 
-        <div class="main-content">
+        <div class="tabs-container">
+            <button class="suggestions-tab active" onclick="showTab('history')">History</button>
+            <button class="suggestions-tab" onclick="showTab('suggestions')" id="suggestionsTab">
+                Suggestions <span id="suggestionsCount"></span>
+            </button>
+        </div>
+
+        <div class="suggestions-panel" id="suggestionsPanel">
+            <!-- Suggestions will be populated by JS -->
+        </div>
+
+        <div class="main-content" id="historyPanel">
             <aside class="sidebar">
                 <h2>Projects</h2>
                 <ul class="project-list" id="projectList">
@@ -771,6 +942,7 @@
         function initializeUI() {
             renderStats();
             renderProjectList();
+            updateSuggestionsCount();
 
             // Select first project by default
             const projects = Object.keys(historyData.projects);
@@ -1195,6 +1367,171 @@
 
         function escapeRegex(string) {
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // Tab switching
+        let currentTab = 'history';
+
+        function showTab(tab) {
+            currentTab = tab;
+            const historyPanel = document.getElementById('historyPanel');
+            const suggestionsPanel = document.getElementById('suggestionsPanel');
+            const tabs = document.querySelectorAll('.suggestions-tab');
+
+            tabs.forEach((t, i) => {
+                t.classList.toggle('active', (i === 0 && tab === 'history') || (i === 1 && tab === 'suggestions'));
+            });
+
+            if (tab === 'history') {
+                historyPanel.style.display = 'grid';
+                suggestionsPanel.classList.remove('active');
+            } else {
+                historyPanel.style.display = 'none';
+                suggestionsPanel.classList.add('active');
+                renderSuggestions();
+            }
+        }
+
+        // Suggestions
+        let savedSuggestions = JSON.parse(localStorage.getItem('savedSuggestions') || '[]');
+
+        function renderSuggestions() {
+            const panel = document.getElementById('suggestionsPanel');
+            const suggestions = historyData.suggestions || [];
+
+            if (suggestions.length === 0) {
+                panel.innerHTML = `
+                    <div class="suggestions-empty">
+                        <div class="suggestions-empty-icon">💡</div>
+                        <p>No suggestions available yet.</p>
+                        <p style="font-size: 12px; margin-top: 8px;">Run the analyzer with API key to generate personalized CLAUDE.md suggestions.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            panel.innerHTML = `
+                <div class="suggestions-header">
+                    <div class="suggestions-title">
+                        <span>💡</span> CLAUDE.md Suggestions
+                    </div>
+                    <div class="suggestions-subtitle">
+                        Personalized instructions based on your coding patterns and best practices.
+                        Click "Add to CLAUDE.md" to save any suggestion.
+                    </div>
+                </div>
+                <div class="suggestions-list">
+                    ${suggestions.map((s, i) => renderSuggestionCard(s, i)).join('')}
+                </div>
+                <div class="claude-md-status" id="claudeMdStatus">
+                    Loading CLAUDE.md status...
+                </div>
+            `;
+
+            // Check CLAUDE.md status
+            checkClaudeMdStatus();
+        }
+
+        function renderSuggestionCard(suggestion, index) {
+            const isSaved = savedSuggestions.includes(suggestion.instruction);
+
+            return `
+                <div class="suggestion-card ${isSaved ? 'saved' : ''}" id="suggestion-${index}">
+                    <div class="suggestion-header">
+                        <span class="suggestion-title">${escapeHtml(suggestion.title)}</span>
+                        <button
+                            class="suggestion-save-btn"
+                            onclick="saveInstruction(${index})"
+                            ${isSaved ? 'disabled' : ''}
+                        >
+                            ${isSaved ? '✓ Added' : '+ Add to CLAUDE.md'}
+                        </button>
+                    </div>
+                    <div class="suggestion-instruction">${escapeHtml(suggestion.instruction)}</div>
+                    <div class="suggestion-rationale">${escapeHtml(suggestion.rationale)}</div>
+                </div>
+            `;
+        }
+
+        async function saveInstruction(index) {
+            const suggestion = historyData.suggestions[index];
+            if (!suggestion) return;
+
+            const btn = document.querySelector(`#suggestion-${index} .suggestion-save-btn`);
+            btn.textContent = 'Saving...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/add-instruction', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: suggestion.title,
+                        instruction: suggestion.instruction
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Mark as saved
+                    savedSuggestions.push(suggestion.instruction);
+                    localStorage.setItem('savedSuggestions', JSON.stringify(savedSuggestions));
+
+                    btn.textContent = '✓ Added';
+                    document.querySelector(`#suggestion-${index}`).classList.add('saved');
+
+                    // Update status
+                    checkClaudeMdStatus();
+                } else {
+                    btn.textContent = result.message || 'Already exists';
+                    setTimeout(() => {
+                        btn.textContent = '+ Add to CLAUDE.md';
+                        btn.disabled = false;
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Failed to save instruction:', error);
+                btn.textContent = 'Error - Try again';
+                setTimeout(() => {
+                    btn.textContent = '+ Add to CLAUDE.md';
+                    btn.disabled = false;
+                }, 2000);
+            }
+        }
+
+        async function checkClaudeMdStatus() {
+            const statusDiv = document.getElementById('claudeMdStatus');
+            if (!statusDiv) return;
+
+            try {
+                const response = await fetch('/api/claude-md');
+                const data = await response.json();
+
+                if (data.exists) {
+                    const lineCount = (data.content.match(/\n/g) || []).length + 1;
+                    statusDiv.innerHTML = `
+                        📄 CLAUDE.md: <span class="claude-md-path">${escapeHtml(data.path)}</span>
+                        <br>Currently ${lineCount} lines
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        📄 CLAUDE.md will be created at: <span class="claude-md-path">${escapeHtml(data.path)}</span>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    ⚠️ Could not check CLAUDE.md status. Make sure you're running <code>python server.py</code>
+                `;
+            }
+        }
+
+        function updateSuggestionsCount() {
+            const count = (historyData.suggestions || []).length;
+            const countSpan = document.getElementById('suggestionsCount');
+            if (countSpan && count > 0) {
+                countSpan.textContent = `(${count})`;
+            }
         }
 
         // Initialize
