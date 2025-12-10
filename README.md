@@ -1,53 +1,88 @@
 # Claude Code History Analyzer
 
-> *"What did I even build yesterday?"* — Every vibe coder, ever
+> *"Wait, which project was I working on? And did that agent ever finish the refactor?"* — You, probably
 
 ![Claude](https://img.shields.io/badge/Powered%20by-Claude%20Opus%204.5-blueviolet)
-![Vibe](https://img.shields.io/badge/Vibe-Immaculate-ff69b4)
-![Memory](https://img.shields.io/badge/Memory-Externalized-brightgreen)
+![Vibe](https://img.shields.io/badge/Vibe-Maximum-ff69b4)
+![Projects](https://img.shields.io/badge/Projects-Too%20Many-orange)
+![ADHD](https://img.shields.io/badge/ADHD-Friendly-brightgreen)
 
 ## The Problem
 
-You've been **vibe coding** for weeks. You and Claude have shipped features, squashed bugs, refactored entire modules, and mass-deleted code you were "pretty sure" wasn't needed. It's been beautiful. It's been productive. It's been... completely undocumented.
+It's 2 AM. You have **7 projects open**. You've spun up **3 agents** — one is refactoring your auth system, another is building a new feature, and the third one... wait, what was the third one doing? Something about tests? Or was that yesterday?
 
-Now your PM asks: *"Can you give me a summary of what you worked on this sprint?"*
+You're a **vibe coder**. You don't do linear. You do *parallel*. You context-switch like a caffeinated hummingbird. One moment you're deep in your iOS app, the next you're fixing a bug in your web dashboard, and somehow you ended up redesigning your database schema in a completely different project.
 
-You stare at your terminal. You stare at your git log. You open Claude Code and scroll through history like an archaeologist sifting through ancient ruins. Was it Monday when you rewrote the auth system? Or was that the day you spent 4 hours debugging a missing semicolon that turned out to be a missing comma?
+This is the way. This is the *vibe*.
 
-**Your memory has failed you. But your `~/.claude/history.jsonl` has not.**
+But then comes **The Question™**: *"What have you actually accomplished this week?"*
+
+You freeze. You have mass-produced more code than an LLM factory. But you couldn't tell anyone what. It's all a beautiful blur of:
+
+- *"Let's spin up two agents for this"*
+- *"Actually, let's also tackle that other thing"*
+- *"Oh wait, I should check on that project from Tuesday"*
+- *"New idea! Let me just quickly..."*
+
+**Your brain is a chaos engine. This tool is your flight recorder.**
 
 ## The Solution
 
-This tool excavates your Claude Code conversation history and transforms it into a beautiful, searchable timeline of everything you've accomplished. It's like having a personal secretary who was silently taking notes while you were in the zone.
+This tool digs through your Claude Code history across **ALL your projects** and reconstructs what you actually did. It's like having a second brain that actually remembers things — organized by project, by day, by session.
+
+Finally, you can answer: *"What was I working on in that foodis project last Thursday?"* without scrolling through 47 conversation threads.
 
 ### Features
 
-- **AI-Powered Summaries** — Uses Claude Opus 4.5 to generate concise summaries of your sessions (or uses built-in summaries for the budget-conscious)
-- **GitHub Integration** — Links commits to your sessions, with preference for tags when available
-- **Beautiful Web UI** — A sleek, dark-mode interface to browse your history by project and date
-- **Searchable** — Find that one session where you "fixed the thing with the stuff"
-- **Expandable Messages** — Click to reveal the full conversation from any session
-- **Cron-Ready** — Set it and forget it. Your history updates automatically.
+- **Multi-Project Dashboard** — See all your projects in one place, sorted by activity
+- **Session Timeline** — Every coding session, every project, every day
+- **AI-Powered Summaries** — Claude Opus 4.5 turns your chaotic sessions into coherent bullet points
+- **Expandable Messages** — Click to see exactly what you asked (and what rabbit holes you went down)
+- **GitHub Commit Links** — Connect your sessions to actual commits (proof you shipped something!)
+- **Tag Support** — Links to releases when available, because you're professional like that
+- **Search Everything** — Find that one session where you "fixed the auth thing" across all projects
+- **Date Filtering** — What did I do last week? Last month? Before my mass-deletion spree?
+- **Cron-Ready** — Runs daily in the background. Set it and forget it. (You will forget it. That's the point.)
+
+## Perfect For
+
+- 🧠 **ADHD Coders** — External memory for when your internal memory said "nah"
+- 🐙 **Multi-Project Jugglers** — Track progress across your entire portfolio of half-finished side projects
+- 🤖 **Agent Wranglers** — Remember what you told your agents to do (and whether they did it)
+- 🌀 **Context Switchers** — Pick up exactly where you left off, even if "where you left off" was 5 projects ago
+- 📝 **Accountability Seekers** — Prove to yourself (and others) that you're actually productive
 
 ## Screenshots
 
-The web interface shows your projects in a timeline view:
+Your command center for multi-project chaos:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  Claude Code History                    [Search...] [Date ▼]   │
 ├─────────────────────────────────────────────────────────────────┤
-│  ┌──────────┐  ┌─────────────────────────────────────────────┐  │
-│  │ Projects │  │ foodis                                      │  │
-│  │          │  │─────────────────────────────────────────────│  │
-│  │ foodis   │  │ December 10, 2025                           │  │
-│  │ guitarHub│  │ ┌─────────────────────────────────────────┐ │  │
-│  │ WorldInt │  │ │ 09:13 - 15:35          [18 msgs] [3 🏷️] │ │  │
-│  │ bennet   │  │ │ • Restaurant invite system planning     │ │  │
-│  │ ...      │  │ │ • iOS deep linking implementation       │ │  │
-│  └──────────┘  │ │ • Booking feature design & beads        │ │  │
-│                │ └─────────────────────────────────────────┘ │  │
-│                └─────────────────────────────────────────────┘  │
+│  📊 12 Projects  │  47 Active Days  │  156 Sessions  │  89 🏷️  │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌──────────────┐  ┌───────────────────────────────────────────┐│
+│  │ PROJECTS     │  │ foodis                          [GitHub] ││
+│  │──────────────│  │───────────────────────────────────────────││
+│  │ foodis    47 │  │ December 10, 2025                        ││
+│  │ guitarHub 32 │  │ ┌───────────────────────────────────────┐ ││
+│  │ WorldInt  18 │  │ │ 09:13 - 15:35       [18 msgs] [🏷️ v2.1]│ ││
+│  │ bennet    12 │  │ │ Spun up 2 agents:                     │ ││
+│  │ btc        8 │  │ │ • Agent 1: Trip invite deep linking   │ ││
+│  │ scenic     5 │  │ │ • Agent 2: Booking feature design     │ ││
+│  │ game       3 │  │ │ Merged both, deployed to staging      │ ││
+│  │ ...          │  │ └───────────────────────────────────────┘ ││
+│  └──────────────┘  │                                           ││
+│                    │ December 9, 2025                          ││
+│                    │ ┌───────────────────────────────────────┐ ││
+│                    │ │ 22:47 - 02:15       [43 msgs] [2 🏷️]  │ ││
+│                    │ │ • Auth system rewrite (the big one)   │ ││
+│                    │ │ • "Quick" database migration          │ ││
+│                    │ │ • Definitely went to bed at a         │ ││
+│                    │ │   reasonable hour                     │ ││
+│                    │ └───────────────────────────────────────┘ ││
+│                    └───────────────────────────────────────────┘│
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -56,8 +91,9 @@ The web interface shows your projects in a timeline view:
 ### Prerequisites
 
 - Python 3.9+
-- Claude Code (obviously)
-- An Anthropic API key (for AI summaries, optional but recommended)
+- Claude Code (with some history to analyze)
+- An Anthropic API key (optional, for enhanced summaries)
+- Multiple projects in various states of completion (mandatory for true vibe coders)
 
 ### Quick Start
 
@@ -69,7 +105,7 @@ cd claudeHistory
 # Install dependencies
 pip install anthropic
 
-# Set up your API key
+# Set up your API key (optional but recommended)
 cp .env.example .env
 # Edit .env and add your ANTHROPIC_API_KEY
 
@@ -77,118 +113,111 @@ cp .env.example .env
 python3 claude_history_analyzer.py
 
 # View your history
-open index.html
-# Or start a local server:
-python3 -m http.server 8080
-```
-
-## Usage
-
-### Basic Usage
-
-```bash
-# Generate history with AI summaries (requires API key)
-python3 claude_history_analyzer.py
-
-# Generate history without API calls (uses built-in summaries)
-python3 claude_history_analyzer.py --no-api
-
-# Force refresh all sessions (ignore cache)
-python3 claude_history_analyzer.py --force-refresh
-
-# Custom output location
-python3 claude_history_analyzer.py --output /path/to/history.json
-```
-
-### Viewing Your History
-
-Option 1: Open `index.html` directly in your browser (may have CORS issues)
-
-Option 2: Start a local server:
-```bash
 python3 -m http.server 8080
 open http://localhost:8080
 ```
 
-### Automated Daily Updates (Cron)
+## Usage
 
-Want your history to update automatically? Set up a cron job:
+### Basic Commands
 
 ```bash
-# Edit your crontab
+# Full analysis with AI summaries
+python3 claude_history_analyzer.py
+
+# Quick analysis without API calls (uses built-in summaries)
+python3 claude_history_analyzer.py --no-api
+
+# Force refresh everything (when you need a fresh start)
+python3 claude_history_analyzer.py --force-refresh
+
+# Custom output location
+python3 claude_history_analyzer.py --output ~/my-history.json
+```
+
+### Daily Auto-Updates (Set It and Forget It)
+
+Because you *will* forget to run this manually:
+
+```bash
+# Edit crontab
 crontab -e
 
 # Add this line (runs daily at 9 PM)
 0 21 * * * /path/to/claudeHistory/run_analyzer.sh
 ```
 
-**Note:** Edit `run_analyzer.sh` to point to your Python installation that has `anthropic` installed.
+Now your history updates itself while you're busy starting another project.
 
 ## How It Works
 
-1. **Reads** your Claude Code history from `~/.claude/history.jsonl`
-2. **Loads** detailed session data from `~/.claude/projects/*/`
-3. **Extracts** built-in summaries (Claude already summarizes your conversations!)
-4. **Enhances** with AI-generated daily summaries (optional)
-5. **Links** git commits that match your session timeframes
-6. **Outputs** a structured JSON file
-7. **Renders** everything in a beautiful web interface
+```
+~/.claude/
+├── history.jsonl          ← Your prompts across ALL projects
+└── projects/
+    ├── project-a/
+    │   └── session-123.jsonl   ← Full conversation history
+    ├── project-b/
+    │   └── session-456.jsonl
+    └── ...
+```
+
+The analyzer:
+1. **Scans** your entire Claude Code history
+2. **Groups** by project and date
+3. **Extracts** summaries (Claude already summarizes your sessions!)
+4. **Enhances** with AI-generated daily overviews
+5. **Links** git commits within session timeframes
+6. **Renders** everything in a searchable web UI
 
 ## Configuration
 
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `ANTHROPIC_API_KEY` | Your Anthropic API key for AI summaries | No (but recommended) |
-
-### Command Line Options
-
 | Option | Description |
 |--------|-------------|
-| `--output`, `-o` | Output JSON file path (default: `history_data.json`) |
-| `--force-refresh`, `-f` | Regenerate all sessions, ignoring cache |
-| `--no-api` | Skip API calls, use only built-in summaries |
+| `--output`, `-o` | Where to save the JSON (default: `history_data.json`) |
+| `--force-refresh`, `-f` | Regenerate everything from scratch |
+| `--no-api` | Skip AI summaries (faster, free, slightly less pretty) |
 
-## Privacy & Security
+## Privacy
 
-- **Your data stays local** — Nothing is sent anywhere except Anthropic's API (for summaries)
-- **API key in `.env`** — Never committed to git
-- **`history_data.json` is gitignored** — Your conversations stay private
-- **No telemetry** — We're not watching you. We're too busy vibe coding.
+- **100% Local** — Your history stays on your machine
+- **API calls only to Anthropic** — And only for generating summaries
+- **Secrets are gitignored** — `.env` and `history_data.json` never leave your machine
+- **No telemetry** — We respect the chaos. We don't track it.
 
 ## FAQ
 
-**Q: Why do some sessions show "Session topics: ..." instead of nice summaries?**
+**Q: I have like 20 projects. Will this slow down?**
+A: The analyzer is incremental — it only processes new sessions. First run might take a minute, subsequent runs are fast.
 
-A: Those sessions don't have built-in Claude summaries. Run with an API key to generate proper summaries, or embrace the chaos.
+**Q: Some summaries look weird?**
+A: Sessions without built-in Claude summaries get a fallback. Use the API key for better results.
 
-**Q: Can I use this with other AI coding assistants?**
+**Q: Can I see what my agents did?**
+A: Yes! Agent sessions are captured just like regular sessions. You'll finally know if that background refactor actually finished.
 
-A: This is specifically built for Claude Code's history format. But hey, PRs welcome!
+**Q: I accidentally mass-deleted my ~/.claude folder. Can this help?**
+A: No. This tool reads history, it doesn't create it. I'm sorry for your loss. 🕯️
 
-**Q: My commits aren't showing up?**
-
-A: Commits are matched by timestamp within the session timeframe (±30 minutes). If you committed hours after your session ended, it won't be linked.
-
-**Q: Is this officially supported by Anthropic?**
-
-A: Nope! This is a community tool built by someone who kept forgetting what they worked on. Use at your own risk.
+**Q: Is this official Anthropic software?**
+A: Nope! Just a tool built by a fellow vibe coder who kept losing track of their 15 concurrent projects.
 
 ## Contributing
 
-Found a bug? Want a feature? PRs welcome! Just remember:
-
-1. Keep it simple
-2. Keep it fun
-3. Keep vibing
+PRs welcome! Especially if you:
+- Have ideas for better multi-agent tracking
+- Want to add project tagging/categorization
+- Can make the UI even more ADHD-friendly
+- Just want to vibe
 
 ## License
 
-MIT — Do whatever you want with it. Build something cool.
+MIT — Fork it, modify it, ship it. Just keep vibing.
 
 ---
 
-*Built with Claude Code, documented by Claude Code, for Claude Code users who can't remember what they built with Claude Code.*
+*Built during a mass-coding session across 4 projects, documented by the very tool it describes, for coders who understand that "focus" is just one approach to productivity.*
+
+🧠 **Your external memory awaits.**
 
 🤖 **Happy Vibe Coding!**
